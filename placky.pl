@@ -11,12 +11,15 @@ my $t = int time().'000';
 sub read_file {
 	my $iface = shift;
 	my $name = shift;
+        if(!defined $iface || !defined $name){
+            die "Undefined params!";
+        }
 	my $save_file = "/var/spool/traffstats/$iface-$name";
 	my $save = 0;
 	my $content = 0;
 
 	if ( -f $save_file ) {
-		open my $read, '<', $save_file;
+		open my $read, '<', $save_file or die $!;
 		$save = <$read>;
 		close $read;
 	}
@@ -26,7 +29,7 @@ sub read_file {
 	close $file;
 	$content =~ s/[\r\n\s]*$//g;
 
-	open my $write, '>', $save_file;
+	open my $write, '>', $save_file or die $!;
 	print $write $content;
 	close $write; 
 	return $content - $save;
@@ -34,6 +37,9 @@ sub read_file {
 
 sub get_iface {
 	my $iface = shift;
+        if(!defined $iface){
+            die "Undefined param iface!";
+        }
 	my $rx_bytes = read_file($iface, 'rx_bytes');
 	my $tx_bytes = read_file($iface, 'tx_bytes');
 	my $rx_packets = read_file($iface, 'rx_packets');
@@ -44,6 +50,7 @@ sub get_iface {
 		"rx_packets" => [$t,$rx_packets],
 		"tx_packets" => [$t,$tx_packets]
 	};
+        return $hash;
 }
 my %ret = ();
 $ret{'eth0'} = get_iface('eth0');
