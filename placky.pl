@@ -45,8 +45,8 @@ sub get_iface {
 	my $rx_packets = read_file($iface, 'rx_packets');
 	my $tx_packets = read_file($iface, 'tx_packets');
 	my $hash = {
-		"rx_bytes" => [$t,$rx_bytes/100],
-		"tx_bytes"=> [$t,$tx_bytes/100],
+		"rx_bytes" => [$t,$rx_bytes/1000],
+		"tx_bytes"=> [$t,$tx_bytes/1000],
 		"rx_packets" => [$t,$rx_packets],
 		"tx_packets" => [$t,$tx_packets]
 	};
