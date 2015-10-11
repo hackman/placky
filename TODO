@@ -2,3 +2,5 @@
 - Make JS alarms
 - Create perp script for monitoring and alarms
 - Create the user for the system
+- After 10min start removing the old data from the arrays
+- Add a menu to change the 10min interval to different intervals
