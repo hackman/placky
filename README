@@ -5,6 +5,8 @@ It is meant as a simple web version of iptraf. More features will be added to it
 
 It consists of a simple Perl script, which is used to generate JSON data and and a simple web page to display the current interface usage.
 
+Live Demo can be found here: http://goblin.yuhu.biz/placky/
+
 Requirements:
 * Perl
 * JSON::XS perl module
@@ -13,3 +15,4 @@ Requirements:
 
 Installations:
   Simply unpack it, configure the directories in install.sh and run ./install.sh
+
