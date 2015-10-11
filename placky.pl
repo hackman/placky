@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use CGI qw(param);
 use JSON::XS;
-my $VERSION = 0.1;
+my $VERSION = 1.0;
 
 print "Content-type: text/json\r\n\r\n";
 umask(077);
@@ -32,6 +33,18 @@ sub read_file {
 	return $content - $save;
 }
 
+sub list_interfaces {
+	my @dirlist;
+	opendir my $sys, '/sys/class/net/';
+	while(my $entry = readdir($sys)) {
+		next if ($entry =~ /^[._]/);
+		next if ($entry eq 'lo');
+		push(@dirlist, $entry);
+	}
+	closedir $sys;
+	return @dirlist;
+}
+
 sub get_iface {
 	my $iface = shift;
 	my $rx_bytes = read_file($iface, 'rx_bytes');
@@ -45,9 +58,21 @@ sub get_iface {
 		"tx_packets" => [$t,$tx_packets]
 	};
 }
-my %ret = ();
-$ret{'eth0'} = get_iface('eth0');
-$ret{'eth1'} = get_iface('eth1');
 
+my %ret;
+my @interface = list_interfaces();
 my $json = JSON::XS->new->ascii->pretty->allow_nonref;
-print $json->encode(\%ret);
+
+# Default to the first interface in the interface array
+if (defined(param('iface')) && param('iface') ne '') {
+	# maybe I should check if param('iface') is a valid interface :)
+	%ret = get_iface(param('iface'));
+} else {
+	%ret = get_iface($interface[0]);
+}
+
+if (defined(param('a')) && param('a') eq 'list') {
+    print $json->encode(\@interface);
+} else {
+    print $json->encode(\%ret);
+}
