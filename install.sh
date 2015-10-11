@@ -21,6 +21,8 @@ else
 	echo "Supplied username '$placky_user' does not exists on this machine"
 fi
 
+sed -i "s|/var/spool/traffstats|${statsdir}|" $webdir/placky.pl
+
 if ! perl -MJSON::XS -e 1; then
 	perl -MCPAN -e 'install JSON::XS'
 fi
