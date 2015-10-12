@@ -65,7 +65,10 @@ my $json = JSON::XS->new->ascii->pretty->allow_nonref;
 
 # Default to the first interface in the interface array
 if (defined(param('iface')) && param('iface') ne '') {
-	# maybe I should check if param('iface') is a valid interface :)
+	# Check if the interface actually exists
+	if ( ! -d "/sys/class/net/" . param('iface') ) {
+		die "Invalid interface selected";
+	}
 	%ret = get_iface(param('iface'));
 } else {
 	%ret = get_iface($interface[0]);
