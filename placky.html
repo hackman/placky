@@ -74,6 +74,15 @@ $(document).ready(function() {
 
 	getInterfaces();
 	fetchData();
+
+	$('#iface').on('change', function() {
+		rx_packets = [ ];
+		tx_packets = [ ];
+		rx_bytes = [ ];
+		tx_bytes = [ ];
+		interface = this.value;
+	});
+
 });
 
 
