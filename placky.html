@@ -1,6 +1,6 @@
 <html>
 <head>
-<title> Placky - live network statistics - ver 0.1 </title>
+<title> Placky - live network statistics - ver 1.0 </title>
 <style>
 .graph {
 	width: 95%;
@@ -11,6 +11,7 @@
 </style>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/jquery.flot.min.js"></script>
+<script type="text/javascript" src="js/jquery.flot.time.min.js"></script>
 <script id="source" language="javascript" type="text/javascript">
 $(document).ready(function() {
 	var options = {
@@ -25,6 +26,8 @@ $(document).ready(function() {
 	var rx_bytes = [];
 	var tx_bytes = [];
 	var iteration = 0;
+	var max_seconds = 60;
+	var refresh = 1000;
 	var interface;
 
 	function fetchData() {
@@ -37,7 +40,7 @@ $(document).ready(function() {
 			$.merge(tx_bytes, [series.tx_bytes]);
 
 			// Do not store more then 15min in the graph
-			if (iteration > 900) {
+			if (iteration > max_seconds) {
 				rx_packets.shift();
 				tx_packets.shift();
 				rx_bytes.shift();
@@ -60,7 +63,7 @@ $(document).ready(function() {
 			dataType: 'json',
 			success: onDataReceived
 		});
-		setTimeout(fetchData, 1000);
+		setTimeout(fetchData, refresh);
 	}
 
 	function getInterfaces() {
@@ -76,6 +79,7 @@ $(document).ready(function() {
 			method: 'GET',
 			dataType: 'json',
 			data: { a: "list" },
+			async: false,
 			success: onListReceived
 		});
 	}
@@ -83,14 +87,20 @@ $(document).ready(function() {
 	getInterfaces();
 	fetchData();
 
+	// Change the currently monitored interface
 	$('#iface').on('change', function() {
-		rx_packets = [ ];
-		tx_packets = [ ];
-		rx_bytes = [ ];
-		tx_bytes = [ ];
+		rx_packets = [];
+		tx_packets = [];
+		rx_bytes = [];
+		tx_bytes = [];
 		interface = this.value;
 	});
 
+	// Change the maximum points that will be kept in the grpah
+	$('#interval').on('change', function() { max_seconds = this.value * 60; });
+
+	// Change the refresh interval
+	$('#refresh').on('change', function() { refresh = this.value * 1000; });
 });
 
 
@@ -101,6 +111,20 @@ $(document).ready(function() {
 	<div id="menu" class="menu">
 	<form>
 		Interfaces: <select name="iface" id="iface"></select>
+		Graph total interval: <select name="interval" id="interval">
+			<option value=1>1 min</option>
+			<option value=10>10 min</option>
+			<option value=15>15 min</option>
+			<option value=20>20 min</option>
+			<option value=30>30 min</option>
+			<option value=60>60 min</option>
+		</select>
+		Refresh interval: <select name="refresh" id="refresh">
+			<option value=1>1 second</option>
+			<option value=2>2 second</option>
+			<option value=5>5 second</option>
+			<option value=10>10 second</option>
+		</select>
 	</form>
 	</div>
 	<div id="packets-graph" class="graph"></div>
