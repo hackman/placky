@@ -20,45 +20,30 @@ $(document).ready(function() {
 		yaxis: { ticks: 10, position: "right" },
 		legend: { placement: "sw" }
 	};
-	var eth0_rx_packets = [];
-	var eth0_tx_packets = [];
-	var eth0_rx_bytes = [];
-	var eth0_tx_bytes = [];
-	var eth1_rx_packets = [];
-	var eth1_tx_packets = [];
-	var eth1_rx_bytes = [];
-	var eth1_tx_bytes = [];
+	var rx_packets = [];
+	var tx_packets = [];
+	var rx_bytes = [];
+	var tx_bytes = [];
 	var iteration = 0;
-	var packets = [
-		{ data: eth0_rx_packets, label: 'eth0 incoming packets' },
-		{ data: eth0_tx_packets, label: 'eth0 outgoing packets' },
-		{ data: eth1_rx_packets, label: 'eth1 incoming packets' },
-		{ data: eth1_tx_packets, label: 'eth1 outgoing packets' }
-	];
-	var bytes = [
-		{ data: eth0_rx_bytes, label: 'eth0 incoming Kbytes' },
-		{ data: eth0_tx_bytes, label: 'eth0 outgoing Kbytes' },
-		{ data: eth1_rx_bytes, label: 'eth1 incoming Kbytes' },
-		{ data: eth1_tx_bytes, label: 'eth1 outgoing Kbytes' }
-	];
-	$.plot("#packets-graph", packets, options);
-	$.plot("#bytes-graph", bytes, options);
+	var interface;
 
 	function fetchData() {
 		++iteration;
 
 		function onDataReceived(series) {
-			$.merge(eth0_rx_packets, [series.eth0.rx_packets]);
-			$.merge(eth0_tx_packets, [series.eth0.tx_packets]);
-			$.merge(eth0_rx_bytes, [series.eth0.rx_bytes]);
-			$.merge(eth0_tx_bytes, [series.eth0.tx_bytes]);
-			$.merge(eth1_rx_packets, [series.eth1.rx_packets]);
-			$.merge(eth1_tx_packets, [series.eth1.tx_packets]);
-			$.merge(eth1_rx_bytes, [series.eth1.rx_bytes]);
-			$.merge(eth1_tx_bytes, [series.eth1.tx_bytes]);
+			$.merge(rx_packets, [series.rx_packets]);
+			$.merge(tx_packets, [series.tx_packets]);
+			$.merge(rx_bytes, [series.rx_bytes]);
+			$.merge(tx_bytes, [series.tx_bytes]);
 
-			$.plot("#packets-graph", packets, options);
-			$.plot("#bytes-graph", bytes, options);
+			$.plot("#packets-graph", [
+					{ data: rx_packets, label: interface + ' incoming packets' },
+					{ data: tx_packets, label: interface + ' outgoing packets' }
+				], options);
+			$.plot("#bytes-graph", [
+					{ data: rx_bytes, label: interface + ' incoming Kbytes' },
+					{ data: tx_bytes, label: interface + ' outgoing Kbytes' }
+				], options);
 		}
 
 		$.ajax({
