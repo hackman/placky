@@ -36,6 +36,14 @@ $(document).ready(function() {
 			$.merge(rx_bytes, [series.rx_bytes]);
 			$.merge(tx_bytes, [series.tx_bytes]);
 
+			// Do not store more then 15min in the graph
+			if (iteration > 900) {
+				rx_packets.shift();
+				tx_packets.shift();
+				rx_bytes.shift();
+				tx_bytes.shift();
+			}
+
 			$.plot("#packets-graph", [
 					{ data: rx_packets, label: interface + ' incoming packets' },
 					{ data: tx_packets, label: interface + ' outgoing packets' }
