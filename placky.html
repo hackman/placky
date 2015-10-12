@@ -69,6 +69,25 @@ $(document).ready(function() {
 		});
 		setTimeout(fetchData, 1000);
 	}
+
+	function getInterfaces() {
+		function onListReceived(m) {
+			for (i = 0; i < m.length; i++ ) {
+				$('#iface').append($('<option>', { value: m[i], text: m[i] }));
+			}
+			interface = m[0];
+		}
+
+		$.ajax({
+			url: 'placky.pl',
+			method: 'GET',
+			dataType: 'json',
+			data: { a: "list" },
+			success: onListReceived
+		});
+	}
+
+	getInterfaces();
 	fetchData();
 });
 
