@@ -1,6 +1,6 @@
 <html>
 <head>
-<title> Placky - live network statistics - ver 1.0 </title>
+<title> Placky - live network statistics - ver 2.0 </title>
 <style>
 .graph {
 	width: 95%;
@@ -31,7 +31,13 @@ $(document).ready(function() {
 	var interface;
 
 	function fetchData() {
-		++iteration;
+
+		if (iteration == 1) {
+			rx_packets.shift();
+			tx_packets.shift();
+			rx_bytes.shift();
+			tx_bytes.shift();
+		}
 
 		function onDataReceived(series) {
 			$.merge(rx_packets, [series.rx_packets]);
@@ -58,12 +64,13 @@ $(document).ready(function() {
 		}
 
 		$.ajax({
-			url: "placky.pl" + interface,
+			url: "placky.pl",
 			data: { "iface": interface },
 			method: 'GET',
 			dataType: 'json',
 			success: onDataReceived
 		});
+		iteration++;
 		setTimeout(fetchData, refresh);
 	}
 
@@ -95,6 +102,7 @@ $(document).ready(function() {
 		rx_bytes.length = 0;
 		tx_bytes.length = 0;
 		interface = this.value;
+		iteration = 0;
 	});
 
 	// Change the maximum points that will be kept in the grpah
