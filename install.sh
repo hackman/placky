@@ -3,6 +3,7 @@
 statsdir=/var/spool/placky
 webdir=/var/www
 placky_user=placky
+modules='JSON::XS CGI'
 
 if [ ! -d $statsdir ]; then
 	mkdir -p $statsdir
@@ -23,6 +24,8 @@ fi
 
 sed -i "s|/var/spool/traffstats|${statsdir}|" $webdir/placky.pl
 
-if ! perl -MJSON::XS -e 1; then
-	perl -MCPAN -e 'install JSON::XS'
-fi
+for module in $modules; do
+	if ! perl -M$module -e 1; then
+		perl -MCPAN -e "install $module"
+	fi
+done
