@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use CGI qw(param);
 use JSON::XS;
-my $VERSION = 1.0;
+my $VERSION = 2.0;
 
 print "Content-type: text/json\r\n\r\n";
 umask(077);
