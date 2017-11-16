@@ -58,7 +58,8 @@ $(document).ready(function() {
 		}
 
 		$.ajax({
-			url: "placky.pl",
+			url: "placky.pl" + interface,
+			data: { "iface": interface },
 			method: 'GET',
 			dataType: 'json',
 			success: onDataReceived
@@ -89,10 +90,10 @@ $(document).ready(function() {
 
 	// Change the currently monitored interface
 	$('#iface').on('change', function() {
-		rx_packets = [];
-		tx_packets = [];
-		rx_bytes = [];
-		tx_bytes = [];
+		rx_packets.length = 0;
+		tx_packets.length = 0;
+		rx_bytes.length = 0;
+		tx_bytes.length = 0;
 		interface = this.value;
 	});
 
