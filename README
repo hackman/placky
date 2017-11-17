@@ -1,18 +1,19 @@
 
 Placky is simple Realtime network interface monitoring system.
 
-It is meant as a simple web version of iptraf. More features will be added to it soon :)
+It is meant as a simple web version of iptraf.
 
-It consists of a simple Perl script, which is used to generate JSON data and and a simple web page to display the current interface usage.
+It consists of a simple Perl script, which is used to generate JSON data and a simple web page to display the current interface usage.
 
-Live Demo can be found here: http://goblin.yuhu.biz/placky/
+Live Demo can be found here: http://linux-bulgaria.org/placky.html
 
 Requirements:
 * Perl
-* JSON::XS perl module
+* JSON::XS and CGI perl modules
 * jQuery (it comes with 1.11.3)
 * FlotCharts (it comes with 0.8.3)
 
-Installations:
-  Simply unpack it, configure the directories in install.sh and run ./install.sh
+Installation instructions:
+  1. Simply unpack it, configure the directories in install.sh and run ./install.sh
+  2. Then configure your server to serv the html and perl script.
 
