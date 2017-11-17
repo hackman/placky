@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use CGI qw(param);
 use JSON::XS;
-my $VERSION = 2.0;
+my $VERSION = 2.1;
 
 print "Content-type: text/json\r\n\r\n";
 umask(077);
@@ -67,7 +67,7 @@ sub get_iface {
 }
 
 my %ret;
-my @interface = list_interfaces();
+my @interface = sort(list_interfaces());
 my $json = JSON::XS->new->ascii->pretty->allow_nonref;
 
 # Default to the first interface in the interface array
