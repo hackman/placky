@@ -1,6 +1,6 @@
 <html>
 <head>
-<title> Placky - live network statistics - ver 2.0 </title>
+<title> Placky - live network statistics - ver 2.1 </title>
 <style>
 .graph {
 	width: 95%;
@@ -29,6 +29,7 @@ $(document).ready(function() {
 	var max_seconds = 60;
 	var refresh = 1000;
 	var interface;
+	var placky_url = 'placky.pl';
 
 	function fetchData() {
 
@@ -64,7 +65,7 @@ $(document).ready(function() {
 		}
 
 		$.ajax({
-			url: "placky.pl",
+			url: placky_url,
 			data: { "iface": interface },
 			method: 'GET',
 			dataType: 'json',
@@ -83,7 +84,7 @@ $(document).ready(function() {
 		}
 
 		$.ajax({
-			url: 'placky.pl',
+			url: placky_url,
 			method: 'GET',
 			dataType: 'json',
 			data: { a: "list" },
