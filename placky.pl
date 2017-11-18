@@ -60,7 +60,7 @@ sub get_iface {
 		"rx_packets" => [$t,$rx_packets],
 		"tx_packets" => [$t,$tx_packets]
 	);
-	return $hash;
+	return %hash;
 }
 
 my %ret;
