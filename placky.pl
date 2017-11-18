@@ -21,7 +21,7 @@ sub read_file {
 	my $content = 0;
 
 	if ( -f $save_file ) {
-		open my $read, '<', $save_file or web_error $!;
+		open my $read, '<', $save_file or web_error "Unable to open $save_file($!)";
 		$save = <$read>;
 		close $read;
 	}
@@ -31,7 +31,7 @@ sub read_file {
 	close $file;
 	$content =~ s/[\r\n\s]*$//g;
 
-	open my $write, '>', $save_file or web_error $!;
+	open my $write, '>', $save_file or web_error "Unable to write to $save_file($!)";
 	print $write $content;
 	close $write; 
 	return $content - $save;
@@ -70,24 +70,31 @@ sub get_iface {
 	return %hash;
 }
 
-my %ret;
+my @ret;
 my @interface = sort(list_interfaces());
 my $json = JSON::XS->new->ascii->pretty->allow_nonref;
 
 print "Content-type: text/json\r\n\r\n";
 # Default to the first interface in the interface array
 if (defined(param('iface')) && param('iface') ne '') {
-	# Check if the interface actually exists
-	if ( ! -d "/sys/class/net/" . param('iface') ) {
-		web_error "Invalid interface selected";
+	my $req_iface = param('iface');
+	my @interfaces = ();
+	if ($req_iface =~ /:/) {
+		@interfaces = split /:/, $req_iface;
+	} else {
+		push(@interfaces, $req_iface);
 	}
-	%ret = get_iface(param('iface'));
-} else {
-	%ret = get_iface($interface[0]);
+	foreach my $iface (@interfaces) {
+		# Check if the interface actually exists
+		if ( ! -d '/sys/class/net/' . $iface ) {
+			web_error "Invalid interface selected";
+		}
+		push(@ret, [ $iface,  get_iface($iface) ]);
+	}
 }
 
 if (defined(param('a')) && param('a') eq 'list') {
     print $json->encode(\@interface);
 } else {
-    print $json->encode(\%ret);
+    print $json->encode(\@ret);
 }
