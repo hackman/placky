@@ -54,6 +54,9 @@ sub get_iface {
 	if (!defined $iface) {
 		web_error 'Undefined param iface!';
 	}
+	if ($iface !~ /^[a-zA-Z0-9]+[._-]?([a-zA-Z0-9]+)*$/) {
+		web_error 'Invalid interface name!';
+	}
 	my $rx_bytes = read_file($iface, 'rx_bytes');
 	my $tx_bytes = read_file($iface, 'tx_bytes');
 	my $rx_packets = read_file($iface, 'rx_packets');
