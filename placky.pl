@@ -5,9 +5,13 @@ use CGI qw(param);
 use JSON::XS;
 my $VERSION = 2.1;
 
-print "Content-type: text/json\r\n\r\n";
 umask(077);
 my $t = int time().'000';
+
+sub web_error {
+	print "ERROR: $_[0]";
+	die "$_[0]";
+}
 
 sub read_file {
 	my $iface = shift;
@@ -17,7 +21,7 @@ sub read_file {
 	my $content = 0;
 
 	if ( -f $save_file ) {
-		open my $read, '<', $save_file or die $!;
+		open my $read, '<', $save_file or web_error $!;
 		$save = <$read>;
 		close $read;
 	}
@@ -27,7 +31,7 @@ sub read_file {
 	close $file;
 	$content =~ s/[\r\n\s]*$//g;
 
-	open my $write, '>', $save_file or die $!;
+	open my $write, '>', $save_file or web_error $!;
 	print $write $content;
 	close $write; 
 	return $content - $save;
@@ -48,7 +52,7 @@ sub list_interfaces {
 sub get_iface {
 	my $iface = shift;
 	if (!defined $iface) {
-		die "Undefined param iface!";
+		web_error 'Undefined param iface!';
 	}
 	my $rx_bytes = read_file($iface, 'rx_bytes');
 	my $tx_bytes = read_file($iface, 'tx_bytes');
@@ -67,11 +71,12 @@ my %ret;
 my @interface = sort(list_interfaces());
 my $json = JSON::XS->new->ascii->pretty->allow_nonref;
 
+print "Content-type: text/json\r\n\r\n";
 # Default to the first interface in the interface array
 if (defined(param('iface')) && param('iface') ne '') {
 	# Check if the interface actually exists
 	if ( ! -d "/sys/class/net/" . param('iface') ) {
-		die "Invalid interface selected";
+		web_error "Invalid interface selected";
 	}
 	%ret = get_iface(param('iface'));
 } else {
