@@ -12,9 +12,6 @@ my $t = int time().'000';
 sub read_file {
 	my $iface = shift;
 	my $name = shift;
-	if (!defined $iface || !defined $name) {
-		die "Undefined params!";
-	}
 	my $save_file = "/var/spool/traffstats/$iface-$name";
 	my $save = 0;
 	my $content = 0;
