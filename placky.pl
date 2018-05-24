@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use CGI qw(param);
 use JSON::XS;
-my $VERSION = 2.1;
+my $VERSION = 2.2;
 
 umask(077);
 my $t = int time().'000';
@@ -79,6 +79,11 @@ print "Content-type: text/json\r\n\r\n";
 if (defined(param('iface')) && param('iface') ne '') {
 	my $req_iface = param('iface');
 	my @interfaces = ();
+	if ($req_iface =~ /^[a-z0-9.:-]+$/) {
+		$req_iface =~ s/\.\././g;	# prevent path traversal
+	} else {
+		web_error "Invalid interface supplied\n";
+	}
 	if ($req_iface =~ /:/) {
 		@interfaces = split /:/, $req_iface;
 	} else {
